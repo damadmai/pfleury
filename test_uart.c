@@ -1,9 +1,9 @@
 /*************************************************************************
-Title:    example program for the Interrupt controlled UART library
-Author:   Peter Fleury <pfleury@gmx.ch>   http://jump.to/fleury
-File:     $Id: test_uart.c,v 1.5 2012/09/14 17:59:08 peter Exp $
-Software: AVR-GCC 3.4, AVRlibc 1.4
-Hardware: any AVR with built-in UART, tested on AT90S8515 at 4 Mhz
+Title:    Example program for the Interrupt controlled UART library
+Author:   Peter Fleury <pfleury@gmx.ch>   http://tinyurl.com/peterfleury
+File:     $Id: test_uart.c,v 1.7 2015/01/31 17:46:31 peter Exp $
+Software: AVR-GCC 4.x
+Hardware: AVR with built-in UART/USART
 
 DESCRIPTION:
           This example shows how to use the UART library uart.c
@@ -17,12 +17,12 @@ DESCRIPTION:
 #include "uart.h"
 
 
-/* define CPU frequency in Mhz here if not defined in Makefile */
+/* define CPU frequency in Hz in Makefile */
 #ifndef F_CPU
-#define F_CPU 4000000UL
+#error "F_CPU undefined, please define CPU frequency in Hz in Makefile"
 #endif
 
-/* 9600 baud */
+/* Define UART buad rate here */
 #define UART_BAUD_RATE      9600      
 
 

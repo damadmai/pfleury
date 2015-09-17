@@ -1,9 +1,9 @@
 ;*************************************************************************
 ; Title	:    I2C (Single) Master Implementation
-; Author:    Peter Fleury <pfleury@gmx.ch>  http://jump.to/fleury
+; Author:    Peter Fleury <pfleury@gmx.ch>
 ;            based on Atmel Appl. Note AVR300
-; File:      $Id: i2cmaster.S,v 1.12 2008/03/02 08:51:27 peter Exp $
-; Software:  AVR-GCC 3.3 or higher
+; File:      $Id: i2cmaster.S,v 1.13 2015/09/16 11:21:00 peter Exp $
+; Software:  AVR-GCC 4.x
 ; Target:    any AVR device
 ;
 ; DESCRIPTION
@@ -29,23 +29,22 @@
 ;
 ;*************************************************************************
 
-#if (__GNUC__ * 100 + __GNUC_MINOR__) < 303
-#error "This library requires AVR-GCC 3.3 or later, update to newer AVR-GCC compiler !"
-#endif
-
 
 #include <avr/io.h>
 
+#undef SCL_PORT
+#undef SCL_DDR
 
 
-;***** Adapt these SCA and SCL port and pin definition to your target !!
+;******----- Adapt these SCA and SCL port and pin definition to your target !!
 ;
-#define SDA     	4		// SDA Port D, Pin 4   
-#define SCL		5		// SCL Port D, Pin 5
-#define SDA_PORT        PORTD           // SDA Port D
-#define SCL_PORT        PORTD           // SCL Port D         
+#define SDA             4           // SDA Port D, Pin 4   
+#define SCL             5           // SCL Port D, Pin 5
+#define SDA_PORT        PORTD       // SDA Port D
+#define SCL_PORT        PORTD       // SCL Port D         
 
-;******
+;******----------------------------------------------------------------------
+
 
 ;-- map the IO register back into the IO address space
 #define SDA_DDR		(_SFR_IO_ADDR(SDA_PORT) - 1)
@@ -66,12 +65,13 @@
 ;*************************************************************************
 ; delay half period
 ; For I2C in normal mode (100kHz), use T/2 > 5us
-; For I2C in fast mode (400kHz),   use T/2 > 1.3us
+; For I2C in fast mode (400kHz),   use T/2 > 1.25us
 ;*************************************************************************
 	.stabs	"",100,0,0,i2c_delay_T2
 	.stabs	"i2cmaster.S",100,0,0,i2c_delay_T2
 	.func i2c_delay_T2	; delay 5.0 microsec with 4 Mhz crystal	
-i2c_delay_T2:        ; 4 cycles
+i2c_delay_T2:        ; 3 cycles
+#if F_CPU <= 4000000UL
 	rjmp 1f      ; 2   "
 1:	rjmp 2f      ; 2   "
 2:	rjmp 3f      ; 2   "
@@ -79,8 +79,41 @@ i2c_delay_T2:        ; 4 cycles
 4:	rjmp 5f      ; 2   "
 5: 	rjmp 6f      ; 2   "
 6:	nop          ; 1   "
-	ret          ; 3   "
-	.endfunc     ; total 20 cyles = 5.0 microsec with 4 Mhz crystal 
+	ret          ; 4   "  total 20 cyles = 5.0 microsec with 4 Mhz crystal 
+#elif F_CPU <= 8000000UL
+    push r24     ; 2 cycle
+    ldi	 r24, 7  ; 1 cycle
+	nop          ; 1 cycle
+1:	sbiw r24, 1  ; 2 cycle
+	brne 1b      ; 2 or 1 cycle, 4 cycles per loop
+	pop  r24     ; 2 ycle
+	ret          ; 4 cycle = total 60 cycles = 5.0 microsec with 12 Mhz crystal
+#elif F_CPU <= 12000000UL
+    push r24     ; 2 cycle
+    ldi	 r24, 12 ; 1 cycle
+	nop          ; 1 cycle
+1:	sbiw r24, 1  ; 2 cycle
+	brne 1b      ; 2 or 1 cycle, 4 cycles per loop
+	pop  r24     ; 2 ycle
+	ret          ; 4 cycle = total 60 cycles = 5.0 microsec with 12 Mhz crystal
+#elif F_CPU <= 16000000UL
+    push r24     ; 2 cycle
+    ldi	 r24, 17 ; 1 cycle
+	nop          ; 1 cycle
+1:	sbiw r24, 1  ; 2 cycle
+	brne 1b      ; 2 or 1 cycle, 4 cycles per loop
+	pop  r24     ; 2 ycle
+	ret          ; 4 cycle = total 80 cycles = 5.0 microsec with 16 Mhz crystal
+#else
+    push r24     ; 2 cycle
+    ldi	 r24, 22 ; 1 cycle
+	nop          ; 1 cycle
+1:	sbiw r24, 1  ; 2 cycle
+	brne 1b      ; 2 or 1 cycle, 4 cycles per loop
+	pop  r24     ; 2 ycle
+	ret          ; 4 cycle = total 100 cycles = 5.0 microsec with 20 Mhz crystal
+#endif	
+	.endfunc     ; 
 
 
 ;*************************************************************************

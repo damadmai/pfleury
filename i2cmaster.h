@@ -1,17 +1,17 @@
 #ifndef _I2CMASTER_H
-#define _I2CMASTER_H   1
+#define _I2CMASTER_H
 /************************************************************************* 
 * Title:    C include file for the I2C master interface 
 *           (i2cmaster.S or twimaster.c)
-* Author:   Peter Fleury <pfleury@gmx.ch>  http://jump.to/fleury
-* File:     $Id: i2cmaster.h,v 1.10 2005/03/06 22:39:57 Peter Exp $
-* Software: AVR-GCC 3.4.3 / avr-libc 1.2.3
+* Author:   Peter Fleury <pfleury@gmx.ch>
+* File:     $Id: i2cmaster.h,v 1.12 2015/09/16 09:27:58 peter Exp $
+* Software: AVR-GCC 4.x
 * Target:   any AVR device
 * Usage:    see Doxygen manual
 **************************************************************************/
 
-#ifdef DOXYGEN
 /**
+ @file
  @defgroup pfleury_ic2master I2C Master library
  @code #include <i2cmaster.h> @endcode
   
@@ -38,8 +38,9 @@
     Replaced the incorrect quarter period delays found in AVR300 with 
     half period delays. 
     
- @author Peter Fleury pfleury@gmx.ch  http://jump.to/fleury
-
+ @author Peter Fleury pfleury@gmx.ch  http://tinyurl.com/peterfleury
+ @copyright (C) 2015 Peter Fleury, GNU General Public License Version 3
+ 
  @par API Usage Example
   The following code shows typical usage of this library, see example test_i2cmaster.c
 
@@ -77,7 +78,7 @@
  @endcode
 
 */
-#endif /* DOXYGEN */
+
 
 /**@{*/
 
@@ -96,7 +97,6 @@
 
 /**
  @brief initialize the I2C master interace. Need to be called only once 
- @param  void
  @return none
  */
 extern void i2c_init(void);
@@ -104,7 +104,6 @@ extern void i2c_init(void);
 
 /** 
  @brief Terminates the data transfer and releases the I2C bus 
- @param void
  @return none
  */
 extern void i2c_stop(void);
@@ -164,7 +163,7 @@ extern unsigned char i2c_readNak(void);
 /** 
  @brief    read one byte from the I2C device
  
- Implemented as a macro, which calls either i2c_readAck or i2c_readNak
+ Implemented as a macro, which calls either @ref i2c_readAck or @ref i2c_readNak
  
  @param    ack 1 send ack, request more data from device<br>
                0 send nak, read is followed by a stop condition 
@@ -172,6 +171,7 @@ extern unsigned char i2c_readNak(void);
  */
 extern unsigned char i2c_read(unsigned char ack);
 #define i2c_read(ack)  (ack) ? i2c_readAck() : i2c_readNak(); 
+
 
 
 /**@}*/

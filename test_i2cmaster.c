@@ -1,15 +1,15 @@
 /****************************************************************************
 Title:    Access serial EEPROM 24C02 using I2C interace
-Author:   Peter Fleury <pfleury@gmx.ch> http://jump.to/fleury
-File:     $Id: test_i2cmaster.c,v 1.2 2003/12/06 17:07:18 peter Exp $
-Software: AVR-GCC 3.3
-Hardware: AT90S8515 at 4 Mhz, any AVR device can be used
+Author:   Peter Fleury <pfleury@gmx.ch>
+File:     $Id: test_i2cmaster.c,v 1.3 2015/09/16 09:29:24 peter Exp $
+Software: AVR-GCC 4.x
+Hardware: any AVR device can be used when using i2cmaster.S or any
+          AVR device with hardware TWI interface when using twimaster.c
 
 Description:
-    This example shows how the I2C library i2cmaster.S can be used to 
-    access a serial eeprom.
-    Based on Atmel Application Note AVR300, adapted to AVR-GCC C interface
-
+    This example shows how the I2C/TWI library i2cmaster.S or twimaster.c 
+	can be used to access a serial eeprom.
+ 
 *****************************************************************************/
 #include <avr/io.h>
 #include "i2cmaster.h"

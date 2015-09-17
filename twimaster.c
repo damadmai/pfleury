@@ -1,7 +1,7 @@
 /*************************************************************************
 * Title:    I2C master library using hardware TWI interface
 * Author:   Peter Fleury <pfleury@gmx.ch>  http://jump.to/fleury
-* File:     $Id: twimaster.c,v 1.3 2005/07/02 11:14:21 Peter Exp $
+* File:     $Id: twimaster.c,v 1.4 2015/01/17 12:16:05 peter Exp $
 * Software: AVR-GCC 3.4.3 / avr-libc 1.2.3
 * Target:   any AVR device with hardware TWI 
 * Usage:    API compatible with I2C Software Library i2cmaster.h
@@ -12,7 +12,7 @@
 #include <i2cmaster.h>
 
 
-/* define CPU frequency in Mhz here if not defined in Makefile */
+/* define CPU frequency in hz here if not defined in Makefile */
 #ifndef F_CPU
 #define F_CPU 4000000UL
 #endif

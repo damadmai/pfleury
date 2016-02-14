@@ -461,10 +461,18 @@ void uart_init(unsigned int baudrate)
         UART0_STATUS = (1<<UART0_BIT_U2X);  //Enable 2x speed 
         #endif
     } 
-    #if defined(UART0_UBRRH)
-    UART0_UBRRH = (unsigned char)((baudrate>>8)&0x80) ;
-    #endif    
-    UART0_UBRRL = (unsigned char) (baudrate&0x00FF);
+#if ((F_CPU < 2000001) || (UART0_BAUDRATE > 56700))
+	// double the speed of the uart
+	UART0_UCSRA |= UART0_U2X;
+
+	// set the baud rate registers
+	UART0_UBRRH = (((F_CPU/((unsigned long)8*baudrate))-1) & 0xFF00) >> 8;
+	UART0_UBRRL = ((F_CPU/((unsigned long)8*baudrate))-1) & 0x00FF;
+#else
+	// set the baud rate registers
+	UART0_UBRRH = (((F_CPU / ((unsigned long) 16 * baudrate)) - 1) & 0xFF00) >> 8;
+	UART0_UBRRL = ((F_CPU / ((unsigned long) 16 * baudrate)) - 1) & 0x00FF;
+#endif
       
     /* Enable USART receiver and transmitter and receive complete interrupt */
     UART0_CONTROL = _BV(UART0_BIT_RXCIE)|(1<<UART0_BIT_RXEN)|(1<<UART0_BIT_TXEN);
